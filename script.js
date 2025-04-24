@@ -74,6 +74,10 @@ const groundPlatforms = [];
 const floatingPlatforms = [];
 const obstacles = [];
 
+// 画像の初期化
+const groundImage = new Image();
+groundImage.src = 'img/tile-spring.png'; // 地面の画像を初期化
+
 // ===== プラットフォーム生成関数 =====
 function createPlatform(arr, x, y, width, height) {
   arr.push({ x, y, width, height });
@@ -479,8 +483,18 @@ function draw() {
 
   // 地面
   groundPlatforms.forEach(platform => {
-    ctx.fillStyle = 'green';
-    ctx.fillRect(platform.x - scrollX, platform.y, platform.width, platform.height);
+    const size = groundHeight; // 高さを基準に正方形のサイズを決定
+    const platformWidth = platform.width; // プラットフォームの幅を取得
+
+    // 地面の画像を繰り返し描画
+    for (let x = platform.x - scrollX; x < platform.x - scrollX + platformWidth; x += size) {
+      // 最後の画像がプラットフォームの右端に合うように調整
+      if (x + size > platform.x - scrollX + platformWidth) {
+        ctx.drawImage(groundImage, x, platform.y, platformWidth - (x - (platform.x - scrollX)), size); // 幅を調整
+      } else {
+        ctx.drawImage(groundImage, x, platform.y, size, size); // 幅と高さを同じにする
+      }
+    }
   });
 
   // 浮遊する足場
